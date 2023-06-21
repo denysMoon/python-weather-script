@@ -1,17 +1,19 @@
 import requests
+import cowsay
+from dotenv import load_dotenv
+import os
 
 
 def get_weather(city):
-    # Temporary API key for testing
-    api_key = "4744245dfa7abc19a9387260236687f2"
+    load_dotenv()
+
+    api_key = os.getenv("OPENWEATHERMAP_API_KEY")
 
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
 
-    # Send the API request
     response = requests.get(url)
     data = response.json()
 
-    # Extract and print the weather information
     if data["cod"] == 200:
         weather = data["weather"][0]["main"]
         description = data["weather"][0]["description"]
@@ -31,11 +33,13 @@ def get_weather(city):
         print(f"  - Rainfall (last hour): {rainfall} mm")
         print(f"  - Overall: {weather} ({description})")
     else:
-        print(f"Failed to retrieve weather data for {city}.")
+        cowsay.milk(f"Failed to retrieve weather data for {city}.")
 
 
-# User input for city
-city = input("Enter the city name: ")
+while True:
+    city = input("Enter the city name (or 'quit' to exit): ")
 
-# Get the weather information for the city
-get_weather(city)
+    if city.lower() == "quit":
+        break
+
+    get_weather(city)
